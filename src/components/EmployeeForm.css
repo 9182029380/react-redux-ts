@@ -1,0 +1,26 @@
+.employee-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .employee-form input {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .employee-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .employee-form button:hover {
+    background-color: #45a049;
+  }
+  
