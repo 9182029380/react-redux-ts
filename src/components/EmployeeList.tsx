@@ -1,45 +1,43 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/store";
-import { updateSalary } from "../redux/employeeSlice";
-import './EmployeeList.css'; // Link to your list styles
+import React, { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "../redux/store"; // Use the custom typed hook
+import { fetchEmployees, updateSalary, deleteEmployee } from "../redux/employeeSlice";
+import './EmployeeList.css';
 
 const EmployeeList: React.FC = () => {
-  const employees = useSelector((state: RootState) => state.employee.employees);
-  const dispatch = useDispatch();
-  const [editId, setEditId] = useState<number | null>(null);
-  const [newSalary, setNewSalary] = useState<number>(0);
+  const { employees, loading, error } = useAppSelector((state) => state.employee);
+  const dispatch = useAppDispatch();
 
-  const handleEdit = (id: number) => {
-    setEditId(id);
+  useEffect(() => {
+    dispatch(fetchEmployees());
+  }, [dispatch]);
+
+  const handleDelete = (id: number) => {
+    dispatch(deleteEmployee(id));
   };
 
-  const handleSave = (id: number) => {
-    dispatch(updateSalary({ id, salary: newSalary }));
-    setEditId(null);
-    setNewSalary(0);
+  const handleUpdateSalary = (id: number, newSalary: number) => {
+    dispatch(updateSalary(id, newSalary));
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <ul className="employee-list">
       {employees.map((employee) => (
         <li key={employee.id}>
-          {employee.name} - 
-          {editId === employee.id ? (
-            <>
-              <input
-                type="number"
-                value={newSalary}
-                onChange={(e) => setNewSalary(Number(e.target.value))}
-              />
-              <button onClick={() => handleSave(employee.id)}>Save</button>
-            </>
-          ) : (
-            <>
-              <span> Salary: ${employee.salary}</span>
-              <button onClick={() => handleEdit(employee.id)}>Edit</button>
-            </>
-          )}
+          {employee.name} - Salary: ${employee.salary}
+          <button onClick={() => handleUpdateSalary(employee.id, employee.salary + 5000)}>
+            Increase Salary
+          </button>
+          <button onClick={() => handleDelete(employee.id)}>
+            Delete
+          </button>
         </li>
       ))}
     </ul>
